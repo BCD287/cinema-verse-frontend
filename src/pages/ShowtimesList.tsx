@@ -43,23 +43,23 @@ const ShowtimesList = () => {
           variant: "destructive",
         });
         
-        // Set demo data with corrected types
+        // Set demo data matching the seeded structure
         setShowtimes([
           {
             id: 1,
-            movie_id: 1, // Add missing property
-            movie_title: "The Dark Knight",
+            movie_id: 1,
+            movie_title: "Action Movie 1",
             start_time: new Date().toISOString(),
-            duration: 165, // Add missing property (in minutes)
-            available_seats: 45
+            duration: 120,
+            available_seats: 17 // 20 total - 3 reserved from seed
           },
           {
             id: 2,
-            movie_id: 2, // Add missing property
-            movie_title: "Inception",
+            movie_id: 2,
+            movie_title: "Comedy Movie 1",
             start_time: new Date(Date.now() + 3600000).toISOString(),
-            duration: 148, // Add missing property (in minutes)
-            available_seats: 32
+            duration: 95,
+            available_seats: 20
           }
         ]);
       } finally {

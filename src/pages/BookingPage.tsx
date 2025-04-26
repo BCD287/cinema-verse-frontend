@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { searchShowtimes, createReservation, Showtime, Seat } from '@/services/api';
@@ -32,34 +31,29 @@ const BookingPage = () => {
       
       setLoading(true);
       try {
-        // In a real app, you'd fetch both the showtime and seats
-        // For demo, we'll create mock data
-        
-        // Mock showtime
         const mockShowtime: Showtime = {
           id: parseInt(id),
-          movie_id: 1, // Adding missing property
-          movie_title: "The Dark Knight",
+          movie_id: 1,
+          movie_title: "Action Movie 1",
           start_time: new Date().toISOString(),
-          duration: 120, // Adding missing property (in minutes)
-          available_seats: 45
+          duration: 120,
+          available_seats: 17
         };
         
         setShowtime(mockShowtime);
         
-        // Mock seats
         const mockSeats: Seat[] = [];
-        const rows = ['A', 'B', 'C', 'D', 'E', 'F'];
+        const rows = ['A', 'B', 'C', 'D', 'E'];
         
-        rows.forEach(row => {
-          for (let col = 1; col <= 8; col++) {
+        rows.forEach((row, rowIndex) => {
+          for (let col = 1; col <= 5; col++) {
             mockSeats.push({
               id: mockSeats.length + 1,
               seat_number: `${row}${col}`,
               row,
               column: col,
               showtime_id: parseInt(id),
-              is_reserved: Math.random() > 0.7 // Randomly mark some seats as reserved
+              is_reserved: rowIndex === 0 && col <= 3
             });
           }
         });
@@ -106,7 +100,6 @@ const BookingPage = () => {
     try {
       if (!showtime) throw new Error("No showtime selected");
       
-      // In a real app, this would call the real API
       await createReservation(showtime.id, selectedSeats);
       
       toast({
