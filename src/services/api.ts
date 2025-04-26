@@ -1,5 +1,7 @@
+
 import { API_URL } from '@/lib/constants';
-import type { Movie, Showtime, Seat, Reservation, User } from '@/types/cinema';
+// Re-export types from types/cinema.ts
+export type { Movie, Showtime, Seat, Reservation, User } from '@/types/cinema';
 
 // Error handling helper
 const handleResponse = async (response: Response) => {

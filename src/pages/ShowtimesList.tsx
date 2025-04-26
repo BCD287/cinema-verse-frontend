@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { searchShowtimes, Showtime } from '@/services/api';
@@ -144,7 +143,7 @@ const ShowtimesList = () => {
                       <div key={movieTitle} className="animate-fade-in">
                         <h3 className="text-lg font-semibold mb-3">{movieTitle}</h3>
                         <div className="flex flex-wrap gap-3">
-                          {movieShowtimes.map((showtime) => (
+                          {Array.isArray(movieShowtimes) && movieShowtimes.map((showtime) => (
                             <Popover key={showtime.id}>
                               <PopoverTrigger asChild>
                                 <Button variant="outline" className="h-auto py-2">
