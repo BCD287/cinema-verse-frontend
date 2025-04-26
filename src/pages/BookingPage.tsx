@@ -38,8 +38,10 @@ const BookingPage = () => {
         // Mock showtime
         const mockShowtime: Showtime = {
           id: parseInt(id),
+          movie_id: 1, // Adding missing property
           movie_title: "The Dark Knight",
           start_time: new Date().toISOString(),
+          duration: 120, // Adding missing property (in minutes)
           available_seats: 45
         };
         
