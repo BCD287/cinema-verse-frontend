@@ -2,6 +2,13 @@
 import { API_URL } from '@/lib/constants';
 
 // Types
+export interface User {
+  id: number;
+  username: string;
+  email: string;
+  role: string;
+}
+
 export interface Movie {
   id: number;
   title: string;
@@ -13,9 +20,11 @@ export interface Movie {
 
 export interface Showtime {
   id: number;
-  movie_title: string;
+  movie_id: number;
+  movie_title?: string;
   start_time: string;
-  available_seats: number;
+  duration: number;
+  available_seats?: number;
 }
 
 export interface Seat {
@@ -32,13 +41,73 @@ export interface Reservation {
   user_id: number;
   showtime_id: number;
   timestamp: string;
+  status: string;
   seats: Seat[];
+}
+
+// Auth interfaces
+export interface RegisterData {
+  username: string;
+  email: string;
+  password: string;
+}
+
+export interface LoginData {
+  username: string;
+  password: string;
+}
+
+export interface AuthResponse {
+  access_token: string;
 }
 
 // Helper to get auth header
 const getAuthHeader = () => {
   const token = localStorage.getItem('cinemaToken');
   return token ? { 'Authorization': `Bearer ${token}` } : {};
+};
+
+// Authentication API calls
+export const register = async (data: RegisterData) => {
+  const response = await fetch(`${API_URL}/register`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+  });
+  
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || 'Registration failed');
+  }
+  
+  return await response.json();
+};
+
+export const login = async (data: LoginData): Promise<AuthResponse> => {
+  const response = await fetch(`${API_URL}/login`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+  });
+  
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || 'Login failed');
+  }
+  
+  return await response.json();
+};
+
+export const validateToken = async () => {
+  const response = await fetch(`${API_URL}/test-auth`, {
+    headers: getAuthHeader()
+  });
+  
+  return response.ok;
 };
 
 // Movie API calls
