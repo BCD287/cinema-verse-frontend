@@ -1,3 +1,6 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -33,22 +36,11 @@
     --ring: 222.2 84% 4.9%;
 
     --radius: 0.5rem;
-
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    
+    /* Cinema theme colors */
+    --cinema-primary: 345 82% 40%;
+    --cinema-secondary: 220 60% 20%;
+    --cinema-accent: 345 70% 50%;
   }
 
   .dark {
@@ -79,14 +71,11 @@
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    
+    /* Cinema theme colors */
+    --cinema-primary: 345 70% 50%;
+    --cinema-secondary: 220 40% 30%;
+    --cinema-accent: 345 60% 60%;
   }
 }
 
@@ -94,8 +83,46 @@
   * {
     @apply border-border;
   }
-
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-inter;
+    font-feature-settings: "rlig" 1, "calt" 1;
   }
+}
+
+.cinema-gradient {
+  @apply bg-gradient-to-br from-red-800 via-red-900 to-red-950;
+}
+
+.screen {
+  @apply h-4 bg-blue-300 w-4/5 mx-auto mb-12 rounded-t-full opacity-80;
+  box-shadow: 0 0 30px rgba(65, 185, 255, 0.7);
+  transform: perspective(100px) rotateX(-5deg);
+}
+
+.seat {
+  @apply w-10 h-10 m-1 rounded-t-lg cursor-pointer transition-all;
+}
+
+.seat-available {
+  @apply bg-blue-100 hover:bg-blue-300;
+}
+
+.seat-reserved {
+  @apply bg-gray-400 cursor-not-allowed;
+}
+
+.seat-selected {
+  @apply bg-green-500;
+}
+
+.font-inter {
+  font-family: 'Inter', sans-serif;
+}
+
+.movie-card {
+  @apply relative overflow-hidden rounded-lg shadow-lg transition-transform duration-300 hover:shadow-xl hover:scale-[1.02] bg-card text-card-foreground;
+}
+
+.movie-poster {
+  @apply w-full h-80 object-cover;
 }
