@@ -1,4 +1,11 @@
-export const API_URL = 'http://localhost:5000';
+// API Configuration
+export const DEFAULT_API_URL = 'http://localhost:5000';
+export let API_URL = localStorage.getItem('apiUrl') || DEFAULT_API_URL;
+
+export const updateApiUrl = (url: string) => {
+  API_URL = url;
+  localStorage.setItem('apiUrl', url);
+};
 
 // Roles
 export const ROLES = {

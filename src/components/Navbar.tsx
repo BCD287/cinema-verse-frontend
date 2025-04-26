@@ -1,4 +1,3 @@
-
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
@@ -13,6 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { ApiSettings } from '@/components/ApiSettings';
 
 export function Navbar() {
   const { isAuthenticated, user, logout, isAdmin } = useAuth();
@@ -58,56 +58,59 @@ export function Navbar() {
             Showtimes
           </Link>
 
-          {isAuthenticated ? (
-            <div className="flex items-center ml-4">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="gap-2">
-                    <User className="h-4 w-4" />
-                    <span className="hidden sm:inline">Account</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>
-                    {user?.username || 'User'}
-                    {isAdmin && <span className="ml-2 text-cinema-accent">(Admin)</span>}
-                  </DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Link to="/my-reservations">My Reservations</Link>
-                  </DropdownMenuItem>
-                  {isAdmin && (
-                    <>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem asChild>
-                        <Link to="/admin/movies">Manage Movies</Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <Link to="/admin/showtimes">Manage Showtimes</Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <Link to="/admin/reports">Reports</Link>
-                      </DropdownMenuItem>
-                    </>
-                  )}
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={logout}>Logout</DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          ) : (
-            <div className="flex gap-2 ml-4">
-              <Button variant="outline" size="sm" asChild>
-                <Link to="/login" className="flex items-center gap-1">
-                  <LogIn className="h-4 w-4" />
-                  <span>Login</span>
-                </Link>
-              </Button>
-              <Button className="bg-cinema-accent hover:bg-cinema-accent/90" size="sm" asChild>
-                <Link to="/register">Register</Link>
-              </Button>
-            </div>
-          )}
+          <div className="flex items-center ml-4">
+            <ApiSettings />
+            {isAuthenticated ? (
+              <div className="flex items-center ml-4">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm" className="gap-2">
+                      <User className="h-4 w-4" />
+                      <span className="hidden sm:inline">Account</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuLabel>
+                      {user?.username || 'User'}
+                      {isAdmin && <span className="ml-2 text-cinema-accent">(Admin)</span>}
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                      <Link to="/my-reservations">My Reservations</Link>
+                    </DropdownMenuItem>
+                    {isAdmin && (
+                      <>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem asChild>
+                          <Link to="/admin/movies">Manage Movies</Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Link to="/admin/showtimes">Manage Showtimes</Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Link to="/admin/reports">Reports</Link>
+                        </DropdownMenuItem>
+                      </>
+                    )}
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={logout}>Logout</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            ) : (
+              <div className="flex gap-2 ml-4">
+                <Button variant="outline" size="sm" asChild>
+                  <Link to="/login" className="flex items-center gap-1">
+                    <LogIn className="h-4 w-4" />
+                    <span>Login</span>
+                  </Link>
+                </Button>
+                <Button className="bg-cinema-accent hover:bg-cinema-accent/90" size="sm" asChild>
+                  <Link to="/register">Register</Link>
+                </Button>
+              </div>
+            )}
+          </div>
         </nav>
       </div>
     </header>

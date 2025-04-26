@@ -1,5 +1,14 @@
-
 import { API_URL } from '@/lib/constants';
+import type { Movie, Showtime, Seat, Reservation, User } from '@/types/cinema';
+
+// Error handling helper
+const handleResponse = async (response: Response) => {
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || 'API request failed');
+  }
+  return response.json();
+};
 
 // Types
 export interface User {
@@ -68,7 +77,7 @@ const getAuthHeader = () => {
 };
 
 // Authentication API calls
-export const register = async (data: RegisterData) => {
+export const register = async (data: { username: string; email: string; password: string }) => {
   const response = await fetch(`${API_URL}/register`, {
     method: 'POST',
     headers: {
@@ -76,16 +85,10 @@ export const register = async (data: RegisterData) => {
     },
     body: JSON.stringify(data)
   });
-  
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || 'Registration failed');
-  }
-  
-  return await response.json();
+  return handleResponse(response);
 };
 
-export const login = async (data: LoginData): Promise<AuthResponse> => {
+export const login = async (data: { username: string; password: string }) => {
   const response = await fetch(`${API_URL}/login`, {
     method: 'POST',
     headers: {
@@ -93,13 +96,7 @@ export const login = async (data: LoginData): Promise<AuthResponse> => {
     },
     body: JSON.stringify(data)
   });
-  
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || 'Login failed');
-  }
-  
-  return await response.json();
+  return handleResponse(response);
 };
 
 export const validateToken = async () => {
@@ -113,11 +110,10 @@ export const validateToken = async () => {
 // Movie API calls
 export const fetchMovies = async (page = 1, perPage = 10) => {
   const response = await fetch(
-    `${API_URL}/movies?page=${page}&per_page=${perPage}`, 
+    `${API_URL}/movies?page=${page}&per_page=${perPage}`,
     { headers: getAuthHeader() }
   );
-  if (!response.ok) throw new Error('Failed to fetch movies');
-  return await response.json();
+  return handleResponse(response);
 };
 
 export const searchMovies = async (genre?: string, title?: string) => {
@@ -131,8 +127,7 @@ export const searchMovies = async (genre?: string, title?: string) => {
   }
   
   const response = await fetch(url, { headers: getAuthHeader() });
-  if (!response.ok) throw new Error('Movie search failed');
-  return await response.json();
+  return handleResponse(response);
 };
 
 export const createMovie = async (movieData: Omit<Movie, 'id'>) => {
@@ -231,13 +226,7 @@ export const searchShowtimes = async (date: string) => {
     `${API_URL}/showtimes/search?date=${date}`,
     { headers: getAuthHeader() }
   );
-  
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Failed to fetch showtimes');
-  }
-  
-  return await response.json();
+  return handleResponse(response);
 };
 
 // Seat API calls
