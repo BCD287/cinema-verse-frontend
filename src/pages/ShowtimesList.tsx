@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { searchShowtimes, Showtime } from '@/services/api';
@@ -33,7 +34,23 @@ const ShowtimesList = () => {
       try {
         const formattedDate = format(selectedDate, 'yyyy-MM-dd');
         const data = await searchShowtimes(formattedDate);
-        setShowtimes(data);
+        
+        // Process the response, ensuring we have a valid array
+        if (data) {
+          // Check if data is already an array or needs to be extracted
+          if (Array.isArray(data)) {
+            setShowtimes(data);
+          } else if (data.showtimes && Array.isArray(data.showtimes)) {
+            // Handle if API returns { showtimes: [...] } format
+            setShowtimes(data.showtimes);
+          } else {
+            // Fallback to empty array if we can't get showtimes
+            console.warn('Unexpected showtimes data format:', data);
+            setShowtimes([]);
+          }
+        } else {
+          setShowtimes([]);
+        }
       } catch (error) {
         console.error('Failed to fetch showtimes:', error);
         toast({
@@ -70,8 +87,15 @@ const ShowtimesList = () => {
   }, [selectedDate, toast]);
 
   const groupShowtimesByMovie = (showtimes: Showtime[]) => {
+    // Safety check: if showtimes is not an array, return an empty object
+    if (!Array.isArray(showtimes)) {
+      console.error("Expected an array of showtimes but got:", showtimes);
+      return {};
+    }
+    
     return showtimes.reduce((groups: Record<string, Showtime[]>, showtime) => {
-      (groups[showtime.movie_title] = groups[showtime.movie_title] || []).push(showtime);
+      const title = showtime.movie_title || `Movie #${showtime.movie_id}`;
+      (groups[title] = groups[title] || []).push(showtime);
       return groups;
     }, {});
   };

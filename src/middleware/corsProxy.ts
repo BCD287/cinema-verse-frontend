@@ -67,10 +67,21 @@ export const fetchWithProxy = async (
     
     // For successful responses, parse JSON
     try {
-      return await response.json();
+      const responseData = await response.json();
+      
+      // Log the response format for debugging
+      if (endpoint.includes('/showtimes')) {
+        console.log('Showtimes response format:', {
+          isArray: Array.isArray(responseData),
+          type: typeof responseData,
+          keys: typeof responseData === 'object' && responseData !== null ? Object.keys(responseData) : []
+        });
+      }
+      
+      return responseData;
     } catch (e) {
-      console.warn('Response is not valid JSON, returning raw response');
-      return response;
+      console.error('Response is not valid JSON:', e);
+      return {};
     }
   } catch (error) {
     console.error('Proxy fetch error:', error);
