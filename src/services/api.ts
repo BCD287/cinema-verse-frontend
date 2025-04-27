@@ -5,15 +5,6 @@ import type { Movie, Showtime, Seat, Reservation, User } from '@/types/cinema';
 export type { Movie, Showtime, Seat, Reservation, User } from '@/types/cinema';
 import { fetchWithProxy } from '@/middleware/corsProxy';
 
-// Error handling helper
-const handleResponse = async (response: Response) => {
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'API request failed');
-  }
-  return response.json();
-};
-
 // Auth interfaces
 export interface RegisterData {
   username: string;
@@ -33,11 +24,15 @@ export interface AuthResponse {
 // Helper to get auth header
 const getAuthHeader = () => {
   const token = localStorage.getItem('cinemaToken');
-  return token ? { 'Authorization': `Bearer ${token}` } : {};
+  if (!token) {
+    console.warn('No authentication token found');
+    return {};
+  }
+  return { 'Authorization': `Bearer ${token}` };
 };
 
 // Authentication API calls
-export const register = async (data: { username: string; email: string; password: string }) => {
+export const register = async (data: RegisterData) => {
   try {
     return await fetchWithProxy('/register', {
       method: 'POST',
@@ -49,7 +44,7 @@ export const register = async (data: { username: string; email: string; password
   }
 };
 
-export const login = async (data: { username: string; password: string }) => {
+export const login = async (data: LoginData) => {
   try {
     return await fetchWithProxy('/login', {
       method: 'POST',
@@ -63,21 +58,36 @@ export const login = async (data: { username: string; password: string }) => {
 
 export const validateToken = async () => {
   try {
+    const token = localStorage.getItem('cinemaToken');
+    if (!token) {
+      console.warn('No token to validate');
+      return false;
+    }
+    
+    console.log('Validating token with API');
     await fetchWithProxy('/test-auth', {
       headers: getAuthHeader()
     });
     return true;
   } catch (error) {
     console.error('Token validation error:', error);
+    // If token validation fails, remove the invalid token
+    localStorage.removeItem('cinemaToken');
     return false;
   }
 };
 
 // Movie API calls
 export const fetchMovies = async (page = 1, perPage = 10) => {
-  return fetchWithProxy(`/movies?page=${page}&per_page=${perPage}`, {
-    headers: getAuthHeader()
-  });
+  console.log('Fetching movies with auth header:', getAuthHeader());
+  try {
+    return await fetchWithProxy(`/movies?page=${page}&per_page=${perPage}`, {
+      headers: getAuthHeader()
+    });
+  } catch (error) {
+    console.error('Failed to fetch movies:', error);
+    throw error;
+  }
 };
 
 export const searchMovies = async (genre?: string, title?: string) => {

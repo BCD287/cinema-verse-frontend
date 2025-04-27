@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchMovies, Movie } from '@/services/api';
@@ -13,87 +12,71 @@ const Index = () => {
   const [featuredMovies, setFeaturedMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, token } = useAuth();
+  const PLACEHOLDER_MOVIES = [
+    {
+      id: 1,
+      title: "The Dark Knight",
+      description: "Batman fights against the Joker in an epic battle for Gotham City's soul.",
+      poster_url: "https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?q=80&w=2070",
+      genre: "Action",
+      release_date: "2022-01-15"
+    },
+    {
+      id: 2,
+      title: "Inception",
+      description: "A thief who enters people's dreams to steal their secrets faces his biggest challenge.",
+      poster_url: "https://images.unsplash.com/photo-1535016120720-40c646be5580?q=80&w=2070",
+      genre: "Sci-Fi",
+      release_date: "2022-02-20"
+    },
+    {
+      id: 3,
+      title: "Interstellar",
+      description: "Explorers travel through a wormhole in space to save humanity.",
+      poster_url: "https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?q=80&w=2056",
+      genre: "Sci-Fi",
+      release_date: "2022-03-10"
+    },
+    {
+      id: 4,
+      title: "The Shawshank Redemption",
+      description: "A tale of hope and redemption from within prison walls.",
+      poster_url: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=1925",
+      genre: "Drama",
+      release_date: "2022-04-05"
+    }
+  ];
 
   useEffect(() => {
     const loadMovies = async () => {
       try {
         if (!isAuthenticated) {
-          // If not authenticated, we'll show placeholder data
-          setFeaturedMovies([
-            {
-              id: 1,
-              title: "The Dark Knight",
-              description: "Batman fights against the Joker in an epic battle for Gotham City's soul.",
-              poster_url: "https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?q=80&w=2070",
-              genre: "Action",
-              release_date: "2022-01-15"
-            },
-            {
-              id: 2,
-              title: "Inception",
-              description: "A thief who enters people's dreams to steal their secrets faces his biggest challenge.",
-              poster_url: "https://images.unsplash.com/photo-1535016120720-40c646be5580?q=80&w=2070",
-              genre: "Sci-Fi",
-              release_date: "2022-02-20"
-            },
-            {
-              id: 3,
-              title: "Interstellar",
-              description: "Explorers travel through a wormhole in space to save humanity.",
-              poster_url: "https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?q=80&w=2056",
-              genre: "Sci-Fi",
-              release_date: "2022-03-10"
-            },
-            {
-              id: 4,
-              title: "The Shawshank Redemption",
-              description: "A tale of hope and redemption from within prison walls.",
-              poster_url: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=1925",
-              genre: "Drama",
-              release_date: "2022-04-05"
-            }
-          ]);
+          // If not authenticated, show placeholder data
+          setFeaturedMovies(PLACEHOLDER_MOVIES);
           setLoading(false);
           return;
         }
 
+        console.log('Fetching movies, auth status:', { isAuthenticated, hasToken: !!token });
         const data = await fetchMovies(1, 8);
         setFeaturedMovies(data.movies);
       } catch (error) {
         console.error('Failed to fetch movies:', error);
         toast({
-          title: 'Error',
-          description: 'Failed to load featured movies',
-          variant: 'destructive',
+          title: 'Notice',
+          description: 'Showing demo data - connect to a backend for real data',
         });
         
         // Set placeholder data in case of error
-        setFeaturedMovies([
-          {
-            id: 1,
-            title: "The Dark Knight",
-            description: "Batman fights against the Joker in an epic battle for Gotham City's soul.",
-            poster_url: "https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?q=80&w=2070",
-            genre: "Action",
-            release_date: "2022-01-15"
-          },
-          {
-            id: 2,
-            title: "Inception",
-            description: "A thief who enters people's dreams to steal their secrets faces his biggest challenge.",
-            poster_url: "https://images.unsplash.com/photo-1535016120720-40c646be5580?q=80&w=2070",
-            genre: "Sci-Fi",
-            release_date: "2022-02-20"
-          }
-        ]);
+        setFeaturedMovies(PLACEHOLDER_MOVIES);
       } finally {
         setLoading(false);
       }
     };
 
     loadMovies();
-  }, [toast, isAuthenticated]);
+  }, [toast, isAuthenticated, token]);
 
   return (
     <div className="min-h-screen flex flex-col">

@@ -2,6 +2,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useToast } from "@/components/ui/use-toast";
 import { API_URL } from '@/lib/constants';
+import { fetchWithProxy } from '@/middleware/corsProxy';
 
 interface User {
   id: number;
@@ -49,34 +50,40 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const validateToken = async (token: string) => {
     try {
-      const response = await fetch(`${API_URL}/debug/token`, {
+      console.log('Validating token:', token.substring(0, 10) + '...');
+      const response = await fetchWithProxy('/debug/token', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
-
-      if (response.ok) {
-        const data = await response.json();
-        fetchUserDetails(token, data.user_id);
+      
+      console.log('Token validation response:', response);
+      if (response && response.user_id) {
+        fetchUserDetails(token, response.user_id);
       } else {
-        localStorage.removeItem('cinemaToken');
-        setToken(null);
-        setUser(null);
-        setLoading(false);
+        handleInvalidToken();
       }
     } catch (error) {
       console.error('Token validation error:', error);
-      localStorage.removeItem('cinemaToken');
-      setToken(null);
-      setUser(null);
-      setLoading(false);
+      handleInvalidToken();
     }
+  };
+
+  const handleInvalidToken = () => {
+    localStorage.removeItem('cinemaToken');
+    setToken(null);
+    setUser(null);
+    setLoading(false);
+    toast({
+      title: "Session expired",
+      description: "Please log in again",
+      variant: "destructive",
+    });
   };
 
   const fetchUserDetails = async (token: string, userId: number) => {
     try {
       // For this example, we're setting basic user info since the API doesn't have a specific endpoint
-      // In a real app, you would fetch user details from an API endpoint
       const userRole = await getUserRole(token);
       
       setUser({
@@ -94,15 +101,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const getUserRole = async (token: string): Promise<string> => {
     try {
       // This is a simplified approach. In a real app, you would decode the JWT or fetch from an API
-      const response = await fetch(`${API_URL}/test-auth`, {
+      const response = await fetchWithProxy('/test-auth', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
       
-      if (response.ok) {
+      if (response) {
         // For demo, we'll assume the user is a regular user unless we know otherwise
-        // In reality, you'd extract this from the JWT or a specific endpoint
         return 'user';
       }
       return 'user';
@@ -114,20 +120,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const login = async (username: string, password: string) => {
     try {
-      const response = await fetch(`${API_URL}/login`, {
+      const data = await fetchWithProxy('/login', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
         body: JSON.stringify({ username, password })
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Login failed');
+      if (!data || !data.access_token) {
+        throw new Error('Invalid response from server');
       }
 
-      const data = await response.json();
       const accessToken = data.access_token;
       
       localStorage.setItem('cinemaToken', accessToken);
@@ -171,18 +172,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const register = async (username: string, email: string, password: string) => {
     try {
-      const response = await fetch(`${API_URL}/register`, {
+      await fetchWithProxy('/register', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
         body: JSON.stringify({ username, email, password })
       });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Registration failed');
-      }
 
       toast({
         title: "Registration successful",

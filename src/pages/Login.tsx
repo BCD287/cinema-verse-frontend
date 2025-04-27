@@ -41,6 +41,7 @@ const Login = () => {
       navigate(from, { replace: true });
     } catch (error) {
       // Error toast is handled in AuthContext
+      console.error('Login handler error:', error);
       setLoading(false);
     }
   };
