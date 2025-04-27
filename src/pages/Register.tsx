@@ -83,7 +83,8 @@ const Register = () => {
       });
       navigate('/login');
     } catch (error) {
-      // Error toast is handled in AuthContext
+      console.error('Registration error:', error);
+      // Error toast is already handled in AuthContext
     } finally {
       setLoading(false);
     }
@@ -113,6 +114,7 @@ const Register = () => {
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="Choose a username"
                 required
+                disabled={loading}
               />
               <p className="text-xs text-muted-foreground">
                 Must be 80 characters or less
@@ -128,6 +130,7 @@ const Register = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
                 required
+                disabled={loading}
               />
             </div>
             
@@ -140,6 +143,7 @@ const Register = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Choose a password"
                 required
+                disabled={loading}
               />
               <p className="text-xs text-muted-foreground">
                 Must be at least 6 characters
@@ -155,6 +159,7 @@ const Register = () => {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="Confirm your password"
                 required
+                disabled={loading}
               />
             </div>
             

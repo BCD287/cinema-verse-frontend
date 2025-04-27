@@ -109,7 +109,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       
       if (response) {
         // For demo, we'll assume the user is a regular user unless we know otherwise
-        return 'user';
+        return response.role || 'user';
       }
       return 'user';
     } catch (error) {
@@ -139,6 +139,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (tokenParts.length === 3) {
         try {
           const payload = JSON.parse(atob(tokenParts[1]));
+          console.log('Token payload:', payload);
           const userId = payload.sub || payload.user_id;
           const userRole = payload.role || 'user';
           

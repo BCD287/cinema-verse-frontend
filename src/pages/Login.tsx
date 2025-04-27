@@ -42,6 +42,7 @@ const Login = () => {
     } catch (error) {
       // Error toast is handled in AuthContext
       console.error('Login handler error:', error);
+    } finally {
       setLoading(false);
     }
   };
@@ -70,6 +71,7 @@ const Login = () => {
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="Enter your username"
                 required
+                disabled={loading}
               />
             </div>
             
@@ -87,6 +89,7 @@ const Login = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password"
                 required
+                disabled={loading}
               />
             </div>
             

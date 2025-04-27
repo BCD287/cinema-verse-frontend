@@ -52,16 +52,26 @@ export const fetchWithProxy = async (
     
     if (!response.ok) {
       // Try to parse error response
+      let errorData;
       try {
-        const errorData = await response.json();
+        errorData = await response.json();
         console.error('API error response:', errorData);
-        throw new Error(errorData.message || `API request failed with status: ${response.status}`);
       } catch (e) {
+        console.error('Could not parse error response as JSON');
         throw new Error(`API request failed with status: ${response.status}`);
       }
+      
+      // Throw error with message from API if available
+      throw new Error(errorData.message || `API request failed with status: ${response.status}`);
     }
     
-    return response.json();
+    // For successful responses, parse JSON
+    try {
+      return await response.json();
+    } catch (e) {
+      console.warn('Response is not valid JSON, returning raw response');
+      return response;
+    }
   } catch (error) {
     console.error('Proxy fetch error:', error);
     throw error;
