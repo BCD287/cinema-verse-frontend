@@ -1,9 +1,9 @@
-
 import { API_URL } from '@/lib/constants';
 // Import types for use within this file
 import type { Movie, Showtime, Seat, Reservation, User } from '@/types/cinema';
 // Re-export types from types/cinema.ts
 export type { Movie, Showtime, Seat, Reservation, User } from '@/types/cinema';
+import { fetchWithProxy } from '@/middleware/corsProxy';
 
 // Error handling helper
 const handleResponse = async (response: Response) => {
@@ -38,46 +38,50 @@ const getAuthHeader = () => {
 
 // Authentication API calls
 export const register = async (data: { username: string; email: string; password: string }) => {
-  const response = await fetch(`${API_URL}/register`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(data)
-  });
-  return handleResponse(response);
+  try {
+    return await fetchWithProxy('/register', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+  } catch (error) {
+    console.error('Registration error:', error);
+    throw error;
+  }
 };
 
 export const login = async (data: { username: string; password: string }) => {
-  const response = await fetch(`${API_URL}/login`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(data)
-  });
-  return handleResponse(response);
+  try {
+    return await fetchWithProxy('/login', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+  } catch (error) {
+    console.error('Login error:', error);
+    throw error;
+  }
 };
 
 export const validateToken = async () => {
-  const response = await fetch(`${API_URL}/test-auth`, {
-    headers: getAuthHeader()
-  });
-  
-  return response.ok;
+  try {
+    await fetchWithProxy('/test-auth', {
+      headers: getAuthHeader()
+    });
+    return true;
+  } catch (error) {
+    console.error('Token validation error:', error);
+    return false;
+  }
 };
 
 // Movie API calls
 export const fetchMovies = async (page = 1, perPage = 10) => {
-  const response = await fetch(
-    `${API_URL}/movies?page=${page}&per_page=${perPage}`,
-    { headers: getAuthHeader() }
-  );
-  return handleResponse(response);
+  return fetchWithProxy(`/movies?page=${page}&per_page=${perPage}`, {
+    headers: getAuthHeader()
+  });
 };
 
 export const searchMovies = async (genre?: string, title?: string) => {
-  let url = `${API_URL}/movies/search`;
+  let url = `/movies/search`;
   const params = new URLSearchParams();
   if (genre) params.append('genre', genre);
   if (title) params.append('title', title);
@@ -86,84 +90,76 @@ export const searchMovies = async (genre?: string, title?: string) => {
     url += `?${params.toString()}`;
   }
   
-  const response = await fetch(url, { headers: getAuthHeader() });
-  return handleResponse(response);
+  return fetchWithProxy(url, { 
+    headers: getAuthHeader() 
+  });
 };
 
 export const createMovie = async (movieData: Omit<Movie, 'id'>) => {
-  const response = await fetch(`${API_URL}/movies`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      ...getAuthHeader()
-    },
-    body: JSON.stringify(movieData)
-  });
-  
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Failed to create movie');
+  try {
+    return await fetchWithProxy('/movies', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...getAuthHeader()
+      },
+      body: JSON.stringify(movieData)
+    });
+  } catch (error) {
+    console.error('Failed to create movie:', error);
+    throw error;
   }
-  
-  return await response.json();
 };
 
 export const updateMovie = async (id: number, movieData: Partial<Movie>) => {
-  const response = await fetch(`${API_URL}/movies/${id}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      ...getAuthHeader()
-    },
-    body: JSON.stringify(movieData)
-  });
-  
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Failed to update movie');
+  try {
+    return await fetchWithProxy(`/movies/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        ...getAuthHeader()
+      },
+      body: JSON.stringify(movieData)
+    });
+  } catch (error) {
+    console.error('Failed to update movie:', error);
+    throw error;
   }
-  
-  return await response.json();
 };
 
 export const deleteMovie = async (id: number) => {
-  const response = await fetch(`${API_URL}/movies/${id}`, {
-    method: 'DELETE',
-    headers: getAuthHeader()
-  });
-  
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Failed to delete movie');
+  try {
+    return await fetchWithProxy(`/movies/${id}`, {
+      method: 'DELETE',
+      headers: getAuthHeader()
+    });
+  } catch (error) {
+    console.error('Failed to delete movie:', error);
+    throw error;
   }
-  
-  return await response.json();
 };
 
 export const uploadPoster = async (file: File) => {
   const formData = new FormData();
   formData.append('file', file);
-  
-  const response = await fetch(`${API_URL}/upload-poster`, {
-    method: 'POST',
-    headers: getAuthHeader(),
-    body: formData
-  });
-  
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Failed to upload poster');
+
+  try {
+    return await fetchWithProxy('/upload-poster', {
+      method: 'POST',
+      headers: getAuthHeader(),
+      body: formData as any // FormData doesn't need stringify
+    });
+  } catch (error) {
+    console.error('Failed to upload poster:', error);
+    throw error;
   }
-  
-  return await response.json();
 };
 
 // Showtime API calls
 export const createShowtime = async (movieId: number, startTime: string, duration: number) => {
-  const response = await fetch(`${API_URL}/showtimes`, {
+  return fetchWithProxy('/showtimes', {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
       ...getAuthHeader()
     },
     body: JSON.stringify({
@@ -172,29 +168,19 @@ export const createShowtime = async (movieId: number, startTime: string, duratio
       duration
     })
   });
-  
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Failed to create showtime');
-  }
-  
-  return await response.json();
 };
 
 export const searchShowtimes = async (date: string) => {
-  const response = await fetch(
-    `${API_URL}/showtimes/search?date=${date}`,
-    { headers: getAuthHeader() }
-  );
-  return handleResponse(response);
+  return fetchWithProxy(`/showtimes/search?date=${date}`, { 
+    headers: getAuthHeader() 
+  });
 };
 
 // Seat API calls
 export const createSeats = async (showtimeId: number, seatNumbers: string[]) => {
-  const response = await fetch(`${API_URL}/seats`, {
+  return fetchWithProxy('/seats', {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
       ...getAuthHeader()
     },
     body: JSON.stringify({
@@ -202,21 +188,13 @@ export const createSeats = async (showtimeId: number, seatNumbers: string[]) => 
       seat_numbers: seatNumbers
     })
   });
-  
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Failed to create seats');
-  }
-  
-  return await response.json();
 };
 
 // Reservation API calls
 export const createReservation = async (showtimeId: number, seatIds: number[]) => {
-  const response = await fetch(`${API_URL}/reservations`, {
+  return fetchWithProxy('/reservations', {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
       ...getAuthHeader()
     },
     body: JSON.stringify({
@@ -224,53 +202,25 @@ export const createReservation = async (showtimeId: number, seatIds: number[]) =
       seat_ids: seatIds
     })
   });
-  
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Failed to create reservation');
-  }
-  
-  return await response.json();
 };
 
 export const cancelReservation = async (reservationId: number) => {
-  const response = await fetch(`${API_URL}/reservations/${reservationId}`, {
+  return fetchWithProxy(`/reservations/${reservationId}`, {
     method: 'DELETE',
     headers: getAuthHeader()
   });
-  
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Failed to cancel reservation');
-  }
-  
-  return await response.json();
 };
 
 // Admin API calls
 export const getAdminReport = async () => {
-  const response = await fetch(`${API_URL}/admin/report`, {
+  return fetchWithProxy('/admin/report', {
     headers: getAuthHeader()
   });
-  
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Failed to fetch admin report');
-  }
-  
-  return await response.json();
 };
 
 export const promoteUser = async (userId: number) => {
-  const response = await fetch(`${API_URL}/users/promote/${userId}`, {
+  return fetchWithProxy(`/users/promote/${userId}`, {
     method: 'POST',
     headers: getAuthHeader()
   });
-  
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Failed to promote user');
-  }
-  
-  return await response.json();
 };
