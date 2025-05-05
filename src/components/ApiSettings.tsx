@@ -21,7 +21,20 @@ export function ApiSettings() {
   const { toast } = useToast();
 
   const handleSave = () => {
-    updateApiUrl(apiUrl);
+    // Trim whitespace and ensure URL format
+    const trimmedUrl = apiUrl.trim();
+    
+    // Basic URL validation
+    if (!trimmedUrl.startsWith('http://') && !trimmedUrl.startsWith('https://')) {
+      toast({
+        title: "Invalid URL",
+        description: "API URL must start with http:// or https://",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    updateApiUrl(trimmedUrl);
     setOpen(false);
     toast({
       title: "Settings updated",
@@ -58,14 +71,19 @@ export function ApiSettings() {
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid gap-2">
-            <label htmlFor="apiUrl" className="text-sm font-medium">
-              API URL
-            </label>
+            <div className="flex items-center justify-between">
+              <label htmlFor="apiUrl" className="text-sm font-medium">
+                API URL
+              </label>
+              <span className="text-xs text-muted-foreground">
+                Current: {API_URL.length > 30 ? API_URL.substring(0, 30) + '...' : API_URL}
+              </span>
+            </div>
             <Input
               id="apiUrl"
               value={apiUrl}
               onChange={(e) => setApiUrl(e.target.value)}
-              placeholder="http://localhost:5000"
+              placeholder="https://api-url.example.com"
             />
           </div>
         </div>

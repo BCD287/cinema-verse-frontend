@@ -29,6 +29,8 @@ export const fetchWithProxy = async (
     ...options,
     headers,
     mode: 'cors',
+    // Add cache control for better reliability with dynamic API endpoints
+    cache: 'no-cache',
   };
   
   // Handle credentials
