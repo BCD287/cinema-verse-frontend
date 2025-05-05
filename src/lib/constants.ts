@@ -42,5 +42,13 @@ export const PAYMENT_METHODS = {
   CASH: 'cash'
 };
 
+// Payment Statuses
+export const PAYMENT_STATUS = {
+  PENDING: 'pending',
+  COMPLETED: 'completed',
+  PROCESSING: 'processing',
+  FAILED: 'failed'
+};
+
 // Prices
 export const SEAT_PRICE = 10.00; // Price per seat in dollars

@@ -16,6 +16,7 @@ export interface Showtime {
   start_time: string;
   duration: number;
   available_seats?: number;
+  admin_id?: number;
 }
 
 export interface Seat {
@@ -29,12 +30,15 @@ export interface Seat {
 
 export interface Payment {
   id: number;
+  user_id: number;
   reservation_id: number;
   amount: number;
+  payment_date?: string;
   payment_method: string;
   status: string;
   transaction_id?: string;
-  timestamp: string;
+  timestamp?: string;
+  created_at?: string;
 }
 
 export interface Reservation {
@@ -52,6 +56,18 @@ export interface User {
   username: string;
   email: string;
   role: string;
+}
+
+export interface Admin {
+  id: number;
+  username: string;
+  email: string;
+}
+
+export interface AdminReference {
+  id: number;
+  admin_id: number;
+  reference_text: string;
 }
 
 export type Genre = 'Action' | 'Comedy' | 'Drama' | 'Horror' | 'Sci-Fi';

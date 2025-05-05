@@ -1,9 +1,9 @@
 
 import { API_URL } from '@/lib/constants';
 // Import types for use within this file
-import type { Movie, Showtime, Seat, Reservation, User } from '@/types/cinema';
+import type { Movie, Showtime, Seat, Reservation, User, Payment, Admin, AdminReference } from '@/types/cinema';
 // Re-export types from types/cinema.ts
-export type { Movie, Showtime, Seat, Reservation, User } from '@/types/cinema';
+export type { Movie, Showtime, Seat, Reservation, User, Payment, Admin, AdminReference } from '@/types/cinema';
 import { fetchWithProxy } from '@/middleware/corsProxy';
 import { PAYMENT_METHODS } from '@/lib/constants';
 
@@ -207,9 +207,17 @@ export const createShowtime = async (movieId: number, startTime: string, duratio
 };
 
 export const searchShowtimes = async (date: string) => {
-  return fetchWithProxy(`/showtimes/search?date=${date}`, { 
-    headers: getAuthHeader() 
-  });
+  try {
+    const response = await fetchWithProxy(`/showtimes/search?date=${date}`, { 
+      headers: getAuthHeader() 
+    });
+    
+    // Ensure we return an array even if the API returns null or undefined
+    return Array.isArray(response) ? response : [];
+  } catch (error) {
+    console.error('Failed to fetch showtimes:', error);
+    return [];
+  }
 };
 
 // Seat API calls
@@ -288,4 +296,16 @@ export const promoteUser = async (userId: number) => {
     method: 'POST',
     headers: getAuthHeader()
   });
+};
+
+// Admin dashboard access
+export const checkAdminAccess = async () => {
+  try {
+    return await fetchWithProxy('/admin', {
+      headers: getAuthHeader()
+    });
+  } catch (error) {
+    console.error('Admin access check error:', error);
+    return false;
+  }
 };

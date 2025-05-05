@@ -35,14 +35,8 @@ const ShowtimesList = () => {
         const formattedDate = format(selectedDate, 'yyyy-MM-dd');
         const data = await searchShowtimes(formattedDate);
         
-        // Ensure we have a valid array of showtimes
-        if (Array.isArray(data)) {
-          setShowtimes(data);
-          console.log('Fetched showtimes:', data);
-        } else {
-          console.warn('Unexpected showtimes data format:', data);
-          setShowtimes([]);
-        }
+        console.log('Fetched showtimes data:', data);
+        setShowtimes(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error('Failed to fetch showtimes:', error);
         toast({
@@ -50,26 +44,7 @@ const ShowtimesList = () => {
           description: "Failed to load showtimes",
           variant: "destructive",
         });
-        
-        // Set demo data matching the structure expected by component
-        setShowtimes([
-          {
-            id: 1,
-            movie_id: 1,
-            movie_title: "Action Movie 1",
-            start_time: new Date().toISOString(),
-            duration: 120,
-            available_seats: 17
-          },
-          {
-            id: 2,
-            movie_id: 2,
-            movie_title: "Comedy Movie 1",
-            start_time: new Date(Date.now() + 3600000).toISOString(),
-            duration: 95,
-            available_seats: 20
-          }
-        ]);
+        setShowtimes([]);
       } finally {
         setLoading(false);
       }
@@ -78,14 +53,12 @@ const ShowtimesList = () => {
     fetchShowtimes();
   }, [selectedDate, toast]);
 
-  const groupShowtimesByMovie = (showtimes: Showtime[]) => {
-    // Safety check: if showtimes is not an array, return an empty object
-    if (!Array.isArray(showtimes)) {
-      console.error("Expected an array of showtimes but got:", showtimes);
+  const groupShowtimesByMovie = (showtimesList: Showtime[]) => {
+    if (!Array.isArray(showtimesList) || showtimesList.length === 0) {
       return {};
     }
     
-    return showtimes.reduce((groups: Record<string, Showtime[]>, showtime) => {
+    return showtimesList.reduce((groups: Record<string, Showtime[]>, showtime) => {
       const title = showtime.movie_title || `Movie #${showtime.movie_id}`;
       if (!groups[title]) {
         groups[title] = [];
@@ -177,7 +150,7 @@ const ShowtimesList = () => {
                                       {formatTime(showtime.start_time)}
                                     </div>
                                     <div className="text-xs text-muted-foreground mt-1">
-                                      {showtime.available_seats} seats
+                                      {showtime.available_seats ?? 'N/A'} seats
                                     </div>
                                   </div>
                                 </Button>
@@ -192,7 +165,7 @@ const ShowtimesList = () => {
                                     Time: {formatTime(showtime.start_time)}
                                   </p>
                                   <p className="text-xs text-muted-foreground">
-                                    {showtime.available_seats} seats available
+                                    {showtime.available_seats ?? 'N/A'} seats available
                                   </p>
                                   <Button 
                                     className="w-full mt-2 bg-cinema-accent hover:bg-cinema-accent/90" 
