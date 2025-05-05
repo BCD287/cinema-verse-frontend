@@ -35,7 +35,7 @@ const MovieDetails = () => {
             id: parseInt(id),
             title: "Sample Movie",
             description: "This is a placeholder for movie details. In a real application, this data would come from the API.",
-            poster_url: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=1925",
+            poster_url: "https://via.placeholder.com/150",
             genre: "Drama",
             release_date: "2022-05-15"
           });
@@ -59,7 +59,7 @@ const MovieDetails = () => {
           id: parseInt(id),
           title: "Sample Movie",
           description: "This is a placeholder for movie details. In a real application, this data would come from the API.",
-          poster_url: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=1925",
+          poster_url: "https://via.placeholder.com/150",
           genre: "Drama",
           release_date: "2022-05-15"
         });
@@ -129,32 +129,32 @@ const MovieDetails = () => {
           <div className="w-full md:w-1/3 lg:w-1/4">
             <div className="rounded-lg overflow-hidden shadow-lg">
               <img 
-                src={movie.poster_url || 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=1925'} 
-                alt={movie.title}
+                src={movie?.poster_url || 'https://via.placeholder.com/150'} 
+                alt={movie?.title}
                 className="w-full object-cover"
                 onError={(e) => {
-                  (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=1925';
+                  (e.target as HTMLImageElement).src = 'https://via.placeholder.com/150';
                 }}
               />
             </div>
           </div>
           
           <div className="flex-1">
-            <h1 className="text-3xl font-bold mb-2">{movie.title}</h1>
+            <h1 className="text-3xl font-bold mb-2">{movie?.title}</h1>
             
             <div className="flex flex-wrap items-center gap-4 mb-6">
               <Badge className="bg-cinema-accent hover:bg-cinema-accent/90">
-                {movie.genre}
+                {movie?.genre}
               </Badge>
               
               <div className="flex items-center text-muted-foreground text-sm">
                 <Calendar className="h-4 w-4 mr-1" />
-                {movie.release_date && format(parseISO(movie.release_date), 'MMMM d, yyyy')}
+                {movie?.release_date && format(parseISO(movie.release_date), 'MMMM d, yyyy')}
               </div>
             </div>
             
             <div className="prose dark:prose-invert mb-8">
-              <p className="text-lg">{movie.description}</p>
+              <p className="text-lg">{movie?.description}</p>
             </div>
             
             <Button 
@@ -162,7 +162,7 @@ const MovieDetails = () => {
               size="lg"
               asChild
             >
-              <Link to={`/book/${movie.id}`}>Book Tickets</Link>
+              <Link to={`/showtimes`}>Book Tickets</Link>
             </Button>
           </div>
         </div>

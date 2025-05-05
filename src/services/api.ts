@@ -1,8 +1,6 @@
 
 import { API_URL } from '@/lib/constants';
-// Import types for use within this file
 import type { Movie, Showtime, Seat, Reservation, User, Payment, Admin, AdminReference } from '@/types/cinema';
-// Re-export types from types/cinema.ts
 export type { Movie, Showtime, Seat, Reservation, User, Payment, Admin, AdminReference } from '@/types/cinema';
 import { fetchWithProxy } from '@/middleware/corsProxy';
 import { PAYMENT_METHODS } from '@/lib/constants';
@@ -26,7 +24,8 @@ export interface AuthResponse {
 // Payment interfaces
 export interface PaymentData {
   payment_method: string;
-  payment_token?: string; // For credit card payments
+  payment_token?: string; // For credit card or other electronic payments
+  amount?: number;
 }
 
 // Helper to get auth header
@@ -235,7 +234,12 @@ export const createSeats = async (showtimeId: number, seatNumbers: string[]) => 
 };
 
 // Reservation API calls
-export const createReservation = async (showtimeId: number, seatIds: number[], paymentMethod = PAYMENT_METHODS.CREDIT_CARD, paymentToken?: string) => {
+export const createReservation = async (
+  showtimeId: number, 
+  seatIds: number[], 
+  paymentMethod = PAYMENT_METHODS.CREDIT_CARD, 
+  paymentToken?: string
+) => {
   return fetchWithProxy('/reservations', {
     method: 'POST',
     headers: {

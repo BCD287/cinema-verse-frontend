@@ -70,9 +70,11 @@ export interface AdminReference {
   reference_text: string;
 }
 
+// Update the Genre type to match the seed data
 export type Genre = 'Action' | 'Comedy' | 'Drama' | 'Horror' | 'Sci-Fi';
 
-export type PaymentMethod = 'credit_card' | 'paypal' | 'cash';
+// Update payment methods based on seed.py
+export type PaymentMethod = 'credit_card' | 'paypal' | 'cash' | 'M-Pesa';
 
 export type PaymentStatus = 'pending' | 'completed' | 'processing' | 'failed';
 

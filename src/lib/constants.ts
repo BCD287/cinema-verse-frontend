@@ -31,15 +31,16 @@ export const MOVIES_PER_PAGE = 10;
 export const MAX_DESCRIPTION_LENGTH = 1000;
 export const MAX_TITLE_LENGTH = 200;
 
-// Seat layout
+// Seat layout (based on seed.py which uses rows A-E and 5 columns)
 export const SEATS_PER_ROW = 5;
-export const TOTAL_ROWS = 4; // A-D
+export const TOTAL_ROWS = 5; // A-E
 
 // Payment Methods
 export const PAYMENT_METHODS = {
   CREDIT_CARD: 'credit_card',
   PAYPAL: 'paypal',
-  CASH: 'cash'
+  CASH: 'cash',
+  MPESA: 'M-Pesa'
 };
 
 // Payment Statuses

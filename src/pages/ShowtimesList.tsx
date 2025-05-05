@@ -44,6 +44,8 @@ const ShowtimesList = () => {
           description: "Failed to load showtimes",
           variant: "destructive",
         });
+        
+        // Set empty array on error
         setShowtimes([]);
       } finally {
         setLoading(false);
@@ -101,11 +103,12 @@ const ShowtimesList = () => {
                   onSelect={(date) => date && setSelectedDate(date)}
                   className="rounded-md border pointer-events-auto"
                   disabled={(date) => {
+                    // Allow dates from today up to 4 days in the future (to align with seed.py which creates 5 days)
                     const today = new Date();
                     today.setHours(0, 0, 0, 0);
-                    const twoWeeksLater = new Date(today);
-                    twoWeeksLater.setDate(today.getDate() + 14);
-                    return date < today || date > twoWeeksLater;
+                    const fourDaysLater = new Date(today);
+                    fourDaysLater.setDate(today.getDate() + 4);
+                    return date < today || date > fourDaysLater;
                   }}
                 />
               </CardContent>
@@ -150,7 +153,7 @@ const ShowtimesList = () => {
                                       {formatTime(showtime.start_time)}
                                     </div>
                                     <div className="text-xs text-muted-foreground mt-1">
-                                      {showtime.available_seats ?? 'N/A'} seats
+                                      {showtime.available_seats !== undefined ? `${showtime.available_seats} seats` : 'Loading seats...'}
                                     </div>
                                   </div>
                                 </Button>
@@ -164,8 +167,13 @@ const ShowtimesList = () => {
                                   <p className="text-sm font-medium">
                                     Time: {formatTime(showtime.start_time)}
                                   </p>
+                                  <p className="text-sm font-medium">
+                                    Duration: {showtime.duration} minutes
+                                  </p>
                                   <p className="text-xs text-muted-foreground">
-                                    {showtime.available_seats ?? 'N/A'} seats available
+                                    {showtime.available_seats !== undefined ? 
+                                      `${showtime.available_seats} seats available` : 
+                                      'Checking availability...'}
                                   </p>
                                   <Button 
                                     className="w-full mt-2 bg-cinema-accent hover:bg-cinema-accent/90" 
