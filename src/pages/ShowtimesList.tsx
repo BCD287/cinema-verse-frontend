@@ -35,20 +35,12 @@ const ShowtimesList = () => {
         const formattedDate = format(selectedDate, 'yyyy-MM-dd');
         const data = await searchShowtimes(formattedDate);
         
-        // Process the response, ensuring we have a valid array
-        if (data) {
-          // Check if data is already an array or needs to be extracted
-          if (Array.isArray(data)) {
-            setShowtimes(data);
-          } else if (data.showtimes && Array.isArray(data.showtimes)) {
-            // Handle if API returns { showtimes: [...] } format
-            setShowtimes(data.showtimes);
-          } else {
-            // Fallback to empty array if we can't get showtimes
-            console.warn('Unexpected showtimes data format:', data);
-            setShowtimes([]);
-          }
+        // Ensure we have a valid array of showtimes
+        if (Array.isArray(data)) {
+          setShowtimes(data);
+          console.log('Fetched showtimes:', data);
         } else {
+          console.warn('Unexpected showtimes data format:', data);
           setShowtimes([]);
         }
       } catch (error) {
@@ -59,7 +51,7 @@ const ShowtimesList = () => {
           variant: "destructive",
         });
         
-        // Set demo data matching the seeded structure
+        // Set demo data matching the structure expected by component
         setShowtimes([
           {
             id: 1,
@@ -67,7 +59,7 @@ const ShowtimesList = () => {
             movie_title: "Action Movie 1",
             start_time: new Date().toISOString(),
             duration: 120,
-            available_seats: 17 // 20 total - 3 reserved from seed
+            available_seats: 17
           },
           {
             id: 2,
@@ -95,14 +87,22 @@ const ShowtimesList = () => {
     
     return showtimes.reduce((groups: Record<string, Showtime[]>, showtime) => {
       const title = showtime.movie_title || `Movie #${showtime.movie_id}`;
-      (groups[title] = groups[title] || []).push(showtime);
+      if (!groups[title]) {
+        groups[title] = [];
+      }
+      groups[title].push(showtime);
       return groups;
     }, {});
   };
 
   const formatTime = (timeString: string) => {
-    const date = new Date(timeString);
-    return format(date, 'h:mm a');
+    try {
+      const date = new Date(timeString);
+      return format(date, 'h:mm a');
+    } catch (error) {
+      console.error('Error formatting time:', error);
+      return 'Invalid time';
+    }
   };
 
   const groupedShowtimes = groupShowtimesByMovie(showtimes);

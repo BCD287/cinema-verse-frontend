@@ -18,7 +18,9 @@ export const ROLES = {
 export const RESERVATION_STATUS = {
   PENDING: 'pending',
   CONFIRMED: 'confirmed',
-  CANCELLED: 'cancelled'
+  CANCELLED: 'cancelled',
+  AWAITING_PAYMENT: 'awaiting_payment',
+  AWAITING_VERIFICATION: 'awaiting_verification'
 };
 
 // Genres from seeded data
@@ -32,3 +34,13 @@ export const MAX_TITLE_LENGTH = 200;
 // Seat layout
 export const SEATS_PER_ROW = 5;
 export const TOTAL_ROWS = 4; // A-D
+
+// Payment Methods
+export const PAYMENT_METHODS = {
+  CREDIT_CARD: 'credit_card',
+  PAYPAL: 'paypal',
+  CASH: 'cash'
+};
+
+// Prices
+export const SEAT_PRICE = 10.00; // Price per seat in dollars

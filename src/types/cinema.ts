@@ -6,6 +6,7 @@ export interface Movie {
   poster_url: string;
   genre: string;
   release_date: string;
+  natural_release_date?: string;
 }
 
 export interface Showtime {
@@ -26,6 +27,16 @@ export interface Seat {
   is_reserved: boolean;
 }
 
+export interface Payment {
+  id: number;
+  reservation_id: number;
+  amount: number;
+  payment_method: string;
+  status: string;
+  transaction_id?: string;
+  timestamp: string;
+}
+
 export interface Reservation {
   id: number;
   user_id: number;
@@ -33,6 +44,7 @@ export interface Reservation {
   timestamp: string;
   status: string;
   seats: Seat[];
+  payment?: Payment;
 }
 
 export interface User {
@@ -44,3 +56,8 @@ export interface User {
 
 export type Genre = 'Action' | 'Comedy' | 'Drama' | 'Horror' | 'Sci-Fi';
 
+export type PaymentMethod = 'credit_card' | 'paypal' | 'cash';
+
+export type PaymentStatus = 'pending' | 'completed' | 'processing' | 'failed';
+
+export type ReservationStatus = 'pending' | 'confirmed' | 'cancelled' | 'awaiting_payment' | 'awaiting_verification';

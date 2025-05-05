@@ -51,21 +51,32 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const validateToken = async (token: string) => {
     try {
       console.log('Validating token:', token.substring(0, 10) + '...');
-      const response = await fetchWithProxy('/debug/token', {
+      const response = await fetchWithProxy('/test-auth', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
       
       console.log('Token validation response:', response);
-      if (response && response.user_id) {
-        fetchUserDetails(token, response.user_id);
+      if (response) {
+        // For this version, we'll assume a valid response means the token is valid
+        // We'll check if the response contains user info
+        const userId = response.user_id || response.sub;
+        const userRole = response.role || 'user';
+        
+        setUser({
+          id: userId,
+          username: response.username || 'User',
+          role: userRole
+        });
       } else {
         handleInvalidToken();
       }
     } catch (error) {
       console.error('Token validation error:', error);
       handleInvalidToken();
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -79,43 +90,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       description: "Please log in again",
       variant: "destructive",
     });
-  };
-
-  const fetchUserDetails = async (token: string, userId: number) => {
-    try {
-      // For this example, we're setting basic user info since the API doesn't have a specific endpoint
-      const userRole = await getUserRole(token);
-      
-      setUser({
-        id: userId,
-        username: 'User', // This would come from the API
-        role: userRole
-      });
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching user details:', error);
-      setLoading(false);
-    }
-  };
-
-  const getUserRole = async (token: string): Promise<string> => {
-    try {
-      // This is a simplified approach. In a real app, you would decode the JWT or fetch from an API
-      const response = await fetchWithProxy('/test-auth', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      
-      if (response) {
-        // For demo, we'll assume the user is a regular user unless we know otherwise
-        return response.role || 'user';
-      }
-      return 'user';
-    } catch (error) {
-      console.error('Error checking user role:', error);
-      return 'user';
-    }
   };
 
   const login = async (username: string, password: string) => {

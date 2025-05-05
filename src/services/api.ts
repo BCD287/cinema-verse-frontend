@@ -1,9 +1,11 @@
+
 import { API_URL } from '@/lib/constants';
 // Import types for use within this file
 import type { Movie, Showtime, Seat, Reservation, User } from '@/types/cinema';
 // Re-export types from types/cinema.ts
 export type { Movie, Showtime, Seat, Reservation, User } from '@/types/cinema';
 import { fetchWithProxy } from '@/middleware/corsProxy';
+import { PAYMENT_METHODS } from '@/lib/constants';
 
 // Auth interfaces
 export interface RegisterData {
@@ -19,6 +21,12 @@ export interface LoginData {
 
 export interface AuthResponse {
   access_token: string;
+}
+
+// Payment interfaces
+export interface PaymentData {
+  payment_method: string;
+  payment_token?: string; // For credit card payments
 }
 
 // Helper to get auth header
@@ -81,9 +89,24 @@ export const validateToken = async () => {
 export const fetchMovies = async (page = 1, perPage = 10) => {
   console.log('Fetching movies with auth header:', getAuthHeader());
   try {
-    return await fetchWithProxy(`/movies?page=${page}&per_page=${perPage}`, {
+    const data = await fetchWithProxy(`/movies?page=${page}&per_page=${perPage}`, {
       headers: getAuthHeader()
     });
+    
+    // Handle the updated movie format that includes natural_release_date
+    return {
+      movies: data.movies.map((movie: any) => ({
+        id: movie.id,
+        title: movie.title,
+        description: movie.description,
+        poster_url: movie.poster_url,
+        genre: movie.genre,
+        release_date: movie.release_date,
+        natural_release_date: movie.natural_release_date
+      })),
+      total_pages: data.total_pages,
+      current_page: data.current_page
+    };
   } catch (error) {
     console.error('Failed to fetch movies:', error);
     throw error;
@@ -100,9 +123,12 @@ export const searchMovies = async (genre?: string, title?: string) => {
     url += `?${params.toString()}`;
   }
   
-  return fetchWithProxy(url, { 
+  const movies = await fetchWithProxy(url, { 
     headers: getAuthHeader() 
   });
+  
+  // Transform the response to match our expected format if needed
+  return Array.isArray(movies) ? movies : [];
 };
 
 export const createMovie = async (movieData: Omit<Movie, 'id'>) => {
@@ -201,7 +227,7 @@ export const createSeats = async (showtimeId: number, seatNumbers: string[]) => 
 };
 
 // Reservation API calls
-export const createReservation = async (showtimeId: number, seatIds: number[]) => {
+export const createReservation = async (showtimeId: number, seatIds: number[], paymentMethod = PAYMENT_METHODS.CREDIT_CARD, paymentToken?: string) => {
   return fetchWithProxy('/reservations', {
     method: 'POST',
     headers: {
@@ -209,7 +235,30 @@ export const createReservation = async (showtimeId: number, seatIds: number[]) =
     },
     body: JSON.stringify({
       showtime_id: showtimeId,
-      seat_ids: seatIds
+      seat_ids: seatIds,
+      payment_method: paymentMethod,
+      payment_token: paymentToken
+    })
+  });
+};
+
+export const updateReservation = async (
+  reservationId: number, 
+  showtimeId: number, 
+  seatIds: number[], 
+  paymentMethod = PAYMENT_METHODS.CREDIT_CARD, 
+  paymentToken?: string
+) => {
+  return fetchWithProxy(`/reservations/${reservationId}`, {
+    method: 'PUT',
+    headers: {
+      ...getAuthHeader()
+    },
+    body: JSON.stringify({
+      showtime_id: showtimeId,
+      seat_ids: seatIds,
+      payment_method: paymentMethod,
+      payment_token: paymentToken
     })
   });
 };
@@ -224,6 +273,12 @@ export const cancelReservation = async (reservationId: number) => {
 // Admin API calls
 export const getAdminReport = async () => {
   return fetchWithProxy('/admin/report', {
+    headers: getAuthHeader()
+  });
+};
+
+export const getAdminReservations = async () => {
+  return fetchWithProxy('/admin/reservations', {
     headers: getAuthHeader()
   });
 };
