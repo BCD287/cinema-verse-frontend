@@ -13,12 +13,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { Settings } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Settings, AlertTriangle } from 'lucide-react';
 
 export function ApiSettings() {
   const [open, setOpen] = useState(false);
   const [apiUrl, setApiUrl] = useState(API_URL);
   const { toast } = useToast();
+  const isNgrokUrl = apiUrl.includes('ngrok');
 
   const handleSave = () => {
     // Trim whitespace and ensure URL format
@@ -69,6 +71,17 @@ export function ApiSettings() {
             Configure the backend API URL. The application will reload after saving.
           </DialogDescription>
         </DialogHeader>
+        
+        {isNgrokUrl && (
+          <Alert variant="warning" className="mb-4">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertTitle>CORS Warning</AlertTitle>
+            <AlertDescription>
+              You're using an ngrok URL. Make sure your backend has CORS properly configured to accept requests from {window.location.origin}
+            </AlertDescription>
+          </Alert>
+        )}
+        
         <div className="grid gap-4 py-4">
           <div className="grid gap-2">
             <div className="flex items-center justify-between">

@@ -53,3 +53,6 @@ export const PAYMENT_STATUS = {
 
 // Prices
 export const SEAT_PRICE = 10.00; // Price per seat in dollars
+
+// Frontend URL for CORS
+export const FRONTEND_URL = 'https://cinema-verse-frontend.vercel.app';

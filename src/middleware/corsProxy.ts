@@ -3,7 +3,7 @@
 // It should be used only during development
 // In production, the backend should handle CORS properly
 
-import { API_URL } from '@/lib/constants';
+import { API_URL, FRONTEND_URL } from '@/lib/constants';
 
 interface ProxyOptions {
   credentials?: 'include' | 'omit' | 'same-origin';
@@ -20,6 +20,7 @@ export const fetchWithProxy = async (
   // Add default headers for JSON content if not already set
   const headers = {
     'Content-Type': 'application/json',
+    'Origin': FRONTEND_URL,
     ...(options.headers || {}),
     ...proxyOptions.headers,
   };
