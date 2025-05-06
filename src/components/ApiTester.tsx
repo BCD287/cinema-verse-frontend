@@ -6,7 +6,8 @@ import { API_URL } from '@/lib/constants';
 import { fetchWithProxy } from '@/middleware/corsProxy';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Copy } from 'lucide-react';
+import { Copy, AlertTriangle } from 'lucide-react';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
 export function ApiTester() {
   const [endpoint, setEndpoint] = useState('/movies');
@@ -14,11 +15,13 @@ export function ApiTester() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [rawResponse, setRawResponse] = useState<string | null>(null);
+  const [isNgrok, setIsNgrok] = useState(API_URL.includes('ngrok'));
 
   const headers = {
     'Accept': 'application/json',
     'Content-Type': 'application/json',
-    'X-Requested-With': 'XMLHttpRequest'
+    'X-Requested-With': 'XMLHttpRequest',
+    'ngrok-skip-browser-warning': 'true' // Added for ngrok bypass
   };
 
   const testApi = async () => {
@@ -72,6 +75,16 @@ fetch('${API_URL}${endpoint}', {
       </CardHeader>
       <CardContent>
         <div className="flex flex-col gap-4">
+          {isNgrok && (
+            <Alert variant="info" className="bg-blue-50">
+              <AlertTriangle className="h-4 w-4" />
+              <AlertTitle>Ngrok URL Detected</AlertTitle>
+              <AlertDescription>
+                Using special headers to bypass the ngrok warning page.
+              </AlertDescription>
+            </Alert>
+          )}
+          
           <div className="flex items-center gap-2">
             <span className="text-sm text-muted-foreground shrink-0">{API_URL}</span>
             <Input 

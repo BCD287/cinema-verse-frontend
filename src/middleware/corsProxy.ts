@@ -24,6 +24,7 @@ export const fetchWithProxy = async (
     'Origin': FRONTEND_URL,
     'Accept': 'application/json',
     'X-Requested-With': 'XMLHttpRequest', // Helps identify AJAX requests
+    'ngrok-skip-browser-warning': 'true', // Skip the ngrok warning page
     ...(options.headers || {}),
     ...proxyOptions.headers,
   };
