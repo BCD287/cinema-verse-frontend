@@ -1,9 +1,10 @@
 
 import { useState } from 'react';
+import { API_URL, updateApiUrl, DEFAULT_API_URL } from '@/lib/constants';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { useToast } from '@/components/ui/use-toast';
-import { API_URL, updateApiUrl, DEFAULT_API_URL } from '@/lib/constants';
 import {
   Dialog,
   DialogContent,
@@ -24,37 +25,39 @@ export function ApiSettings() {
 
   const handleSave = () => {
     // Trim whitespace and ensure URL format
-    const trimmedUrl = apiUrl.trim();
+    let formattedUrl = apiUrl.trim();
     
-    // Basic URL validation
-    if (!trimmedUrl.startsWith('http://') && !trimmedUrl.startsWith('https://')) {
-      toast({
-        title: "Invalid URL",
-        description: "API URL must start with http:// or https://",
-        variant: "destructive",
-      });
-      return;
+    // If URL doesn't start with http:// or https://, add it
+    if (!formattedUrl.startsWith('http://') && !formattedUrl.startsWith('https://')) {
+      formattedUrl = `https://${formattedUrl}`;
     }
     
-    updateApiUrl(trimmedUrl);
+    // Remove trailing slash if present
+    if (formattedUrl.endsWith('/')) {
+      formattedUrl = formattedUrl.slice(0, -1);
+    }
+    
+    updateApiUrl(formattedUrl);
     setOpen(false);
+    
+    // Show toast
     toast({
-      title: "Settings updated",
-      description: "API URL has been updated successfully.",
+      title: "API URL Updated",
+      description: `The API URL has been set to: ${formattedUrl}`,
     });
-    // Reload the page to ensure all components use the new API URL
-    window.location.reload();
+    
+    // Reload the page to apply changes
+    setTimeout(() => {
+      window.location.reload();
+    }, 1500);
   };
 
   const handleReset = () => {
     setApiUrl(DEFAULT_API_URL);
-    updateApiUrl(DEFAULT_API_URL);
-    setOpen(false);
     toast({
-      title: "Settings reset",
-      description: "API URL has been reset to default.",
+      title: "Default URL Restored",
+      description: "The API URL has been reset to the default value.",
     });
-    window.location.reload();
   };
 
   return (
@@ -62,6 +65,7 @@ export function ApiSettings() {
       <DialogTrigger asChild>
         <Button variant="ghost" size="icon">
           <Settings className="h-5 w-5" />
+          <span className="sr-only">API Settings</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
@@ -73,7 +77,7 @@ export function ApiSettings() {
         </DialogHeader>
         
         {isNgrokUrl && (
-          <Alert variant="warning" className="mb-4">
+          <Alert className="mb-4">
             <AlertTriangle className="h-4 w-4" />
             <AlertTitle>CORS Warning</AlertTitle>
             <AlertDescription>
@@ -85,32 +89,29 @@ export function ApiSettings() {
         <div className="grid gap-4 py-4">
           <div className="grid gap-2">
             <div className="flex items-center justify-between">
-              <label htmlFor="apiUrl" className="text-sm font-medium">
-                API URL
-              </label>
-              <span className="text-xs text-muted-foreground">
-                Current: {API_URL.length > 30 ? API_URL.substring(0, 30) + '...' : API_URL}
-              </span>
+              <Label htmlFor="apiUrl">API URL</Label>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={handleReset}
+                className="text-xs h-7 px-2"
+              >
+                Reset to Default
+              </Button>
             </div>
             <Input
               id="apiUrl"
               value={apiUrl}
               onChange={(e) => setApiUrl(e.target.value)}
-              placeholder="https://api-url.example.com"
+              placeholder="Enter API URL"
             />
+            <p className="text-xs text-muted-foreground">
+              Current: {API_URL}
+            </p>
           </div>
         </div>
-        <DialogFooter className="flex justify-between">
-          <Button
-            type="button"
-            variant="destructive"
-            onClick={handleReset}
-          >
-            Reset to Default
-          </Button>
-          <Button type="submit" onClick={handleSave}>
-            Save Changes
-          </Button>
+        <DialogFooter>
+          <Button type="submit" onClick={handleSave}>Save changes</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

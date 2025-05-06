@@ -9,6 +9,7 @@ import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { useToast } from '@/components/ui/use-toast';
 import { Film } from 'lucide-react';
+import { API_URL } from '@/lib/constants';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -40,7 +41,30 @@ const Login = () => {
       // Navigate to the page they were trying to visit (or home)
       navigate(from, { replace: true });
     } catch (error) {
-      // Error toast is handled in AuthContext
+      const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
+      
+      // Check if the error might be related to receiving HTML instead of JSON
+      if (errorMessage.includes('HTML') || errorMessage.includes('invalid JSON')) {
+        toast({
+          title: "API Configuration Error",
+          description: (
+            <div>
+              <p>The API server returned HTML instead of JSON. Please check the API URL.</p>
+              <p className="mt-2">Current API URL: {API_URL}</p>
+              <p className="mt-2">Click the settings icon to configure the correct API endpoint.</p>
+            </div>
+          ),
+          variant: "destructive",
+          duration: 10000, // Show for longer since this is important
+        });
+      } else {
+        toast({
+          title: "Login failed",
+          description: errorMessage,
+          variant: "destructive",
+        });
+      }
+      
       console.error('Login handler error:', error);
     } finally {
       setLoading(false);

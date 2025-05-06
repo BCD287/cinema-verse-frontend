@@ -21,6 +21,7 @@ export const fetchWithProxy = async (
   const headers = {
     'Content-Type': 'application/json',
     'Origin': FRONTEND_URL,
+    'Accept': 'application/json',  // Explicitly request JSON
     ...(options.headers || {}),
     ...proxyOptions.headers,
   };
@@ -50,25 +51,36 @@ export const fetchWithProxy = async (
     // Log the response status for debugging
     console.log(`Response from ${endpoint}:`, { 
       status: response.status, 
-      statusText: response.statusText 
+      statusText: response.statusText,
+      contentType: response.headers.get('Content-Type')
     });
     
     if (!response.ok) {
+      // Check if response is HTML instead of JSON
+      const contentType = response.headers.get('Content-Type');
+      if (contentType && contentType.includes('text/html')) {
+        throw new Error(`Server returned HTML instead of JSON. The API endpoint may be incorrect or the server might be returning a login page.`);
+      }
+      
       // Try to parse error response
-      let errorData;
       try {
-        errorData = await response.json();
+        const errorData = await response.json();
         console.error('API error response:', errorData);
+        throw new Error(errorData.message || `API request failed with status: ${response.status}`);
       } catch (e) {
         console.error('Could not parse error response as JSON');
         throw new Error(`API request failed with status: ${response.status}`);
       }
-      
-      // Throw error with message from API if available
-      throw new Error(errorData.message || `API request failed with status: ${response.status}`);
     }
     
-    // For successful responses, parse JSON
+    // For successful responses, check content type first
+    const contentType = response.headers.get('Content-Type');
+    if (contentType && contentType.includes('text/html')) {
+      console.error('Server returned HTML instead of JSON');
+      throw new Error('Server returned HTML instead of JSON. The API endpoint may be incorrect or the server might be returning a login page.');
+    }
+    
+    // Try to parse as JSON
     try {
       const responseData = await response.json();
       
@@ -84,7 +96,7 @@ export const fetchWithProxy = async (
       return responseData;
     } catch (e) {
       console.error('Response is not valid JSON:', e);
-      return {};
+      throw new Error('Server returned invalid JSON. Please check if the API endpoint is correct.');
     }
   } catch (error) {
     console.error('Proxy fetch error:', error);
