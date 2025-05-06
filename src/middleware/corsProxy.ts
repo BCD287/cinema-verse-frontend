@@ -18,11 +18,12 @@ export const fetchWithProxy = async (
   const url = `${API_URL}${endpoint}`;
   
   // Add default headers for JSON content if not already set
+  // Make sure to explicitly set Accept header to application/json
   const headers = {
     'Content-Type': 'application/json',
     'Origin': FRONTEND_URL,
-    'Accept': 'application/json',  // Explicitly request JSON
-    'X-Requested-With': 'XMLHttpRequest', // Add this to help server identify AJAX requests
+    'Accept': 'application/json',
+    'X-Requested-With': 'XMLHttpRequest', // Helps identify AJAX requests
     ...(options.headers || {}),
     ...proxyOptions.headers,
   };
