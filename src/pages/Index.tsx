@@ -7,10 +7,12 @@ import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { MovieCard } from '@/components/MovieCard';
 import { useAuth } from '@/contexts/AuthContext';
+import { ApiTester } from '@/components/ApiTester';
 
 const Index = () => {
   const [featuredMovies, setFeaturedMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showApiTester, setShowApiTester] = useState(false);
   const { toast } = useToast();
   const { isAuthenticated, token } = useAuth();
   const PLACEHOLDER_MOVIES = [
@@ -100,7 +102,21 @@ const Index = () => {
                 <Link to="/register">Sign Up Now</Link>
               </Button>
             )}
+            <Button 
+              size="sm" 
+              variant="outline" 
+              className="text-white border-white hover:bg-white/10"
+              onClick={() => setShowApiTester(!showApiTester)}
+            >
+              {showApiTester ? 'Hide API Tester' : 'Test API'}
+            </Button>
           </div>
+          
+          {showApiTester && (
+            <div className="mt-8 max-w-3xl mx-auto">
+              <ApiTester />
+            </div>
+          )}
         </div>
       </section>
 

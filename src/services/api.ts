@@ -92,20 +92,55 @@ export const fetchMovies = async (page = 1, perPage = 10) => {
       headers: getAuthHeader()
     });
     
-    // Handle the updated movie format that includes natural_release_date
-    return {
-      movies: data.movies.map((movie: any) => ({
-        id: movie.id,
-        title: movie.title,
-        description: movie.description,
-        poster_url: movie.poster_url,
-        genre: movie.genre,
-        release_date: movie.release_date,
-        natural_release_date: movie.natural_release_date
-      })),
-      total_pages: data.total_pages,
-      current_page: data.current_page
-    };
+    // Handle different response formats from the API
+    if (Array.isArray(data)) {
+      // If the API returns just an array of movies directly
+      return {
+        movies: data.map((movie: any) => ({
+          id: movie.id,
+          title: movie.title,
+          description: movie.description,
+          poster_url: movie.poster_url,
+          genre: movie.genre,
+          release_date: movie.release_date,
+          natural_release_date: movie.natural_release_date || movie.release_date
+        })),
+        total_pages: 1,
+        current_page: 1
+      };
+    } else if (data && typeof data === 'object') {
+      // If the API returns a paginated object structure
+      if (data.movies && Array.isArray(data.movies)) {
+        return {
+          movies: data.movies.map((movie: any) => ({
+            id: movie.id,
+            title: movie.title,
+            description: movie.description,
+            poster_url: movie.poster_url,
+            genre: movie.genre,
+            release_date: movie.release_date,
+            natural_release_date: movie.natural_release_date || movie.release_date
+          })),
+          total_pages: data.total_pages || 1,
+          current_page: data.current_page || 1
+        };
+      } else {
+        // If data is returned but doesn't match expected format
+        console.warn('API returned unexpected data format:', data);
+        return {
+          movies: [],
+          total_pages: 1,
+          current_page: 1
+        };
+      }
+    } else {
+      console.error('API returned invalid data type:', typeof data);
+      return {
+        movies: [],
+        total_pages: 1,
+        current_page: 1
+      };
+    }
   } catch (error) {
     console.error('Failed to fetch movies:', error);
     throw error;
