@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { useToast } from '@/components/ui/use-toast';
-import { Film } from 'lucide-react';
+import { Film, LogIn } from 'lucide-react';
 import { API_URL } from '@/lib/constants';
 
 const Login = () => {
@@ -75,17 +75,20 @@ const Login = () => {
     <div className="min-h-screen flex flex-col">
       <Navbar />
       
-      <div className="flex-1 flex items-center justify-center py-12">
-        <div className="w-full max-w-md px-8 py-12 bg-card rounded-lg shadow-lg">
+      <div className="flex-1 flex items-center justify-center auth-page py-12">
+        <div className="w-full max-w-md px-8 py-10 auth-card rounded-xl">
           <div className="flex justify-center mb-6">
-            <div className="p-2 rounded-full bg-cinema-accent/10">
-              <Film className="h-8 w-8 text-cinema-accent" />
+            <div className="p-3 rounded-full bg-cinema-accent text-white">
+              <LogIn className="h-8 w-8" />
             </div>
           </div>
           
-          <h1 className="text-2xl font-bold text-center mb-6">Log In to CinemaVerse</h1>
+          <h1 className="text-3xl font-bold text-center mb-2">Welcome Back</h1>
+          <p className="text-center text-muted-foreground mb-6">
+            Sign in to continue to CinemaVerse
+          </p>
           
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-2">
               <Label htmlFor="username">Username</Label>
               <Input
@@ -96,6 +99,7 @@ const Login = () => {
                 placeholder="Enter your username"
                 required
                 disabled={loading}
+                className="h-11"
               />
             </div>
             
@@ -114,12 +118,13 @@ const Login = () => {
                 placeholder="Enter your password"
                 required
                 disabled={loading}
+                className="h-11"
               />
             </div>
             
             <Button 
               type="submit" 
-              className="w-full bg-cinema-accent hover:bg-cinema-accent/90"
+              className="w-full h-11 bg-cinema-accent hover:bg-cinema-accent/90 text-lg font-medium"
               disabled={loading}
             >
               {loading ? (
@@ -131,7 +136,7 @@ const Login = () => {
             </Button>
           </form>
           
-          <div className="mt-6 text-center">
+          <div className="mt-8 text-center">
             <p className="text-sm text-muted-foreground">
               Don't have an account?{' '}
               <Link to="/register" className="text-cinema-accent hover:underline font-medium">

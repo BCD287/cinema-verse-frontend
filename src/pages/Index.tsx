@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchMovies, Movie } from '@/services/api';
@@ -85,8 +86,8 @@ const Index = () => {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="cinema-gradient text-white py-16 sm:py-24">
-        <div className="container text-center">
+      <section className="cinema-gradient text-white py-16 sm:py-24 relative">
+        <div className="container relative z-10 text-center">
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 tracking-tight">
             Your Premier Movie Experience
           </h1>

@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { useToast } from '@/components/ui/use-toast';
-import { Film } from 'lucide-react';
+import { UserPlus } from 'lucide-react';
 
 const Register = () => {
   const [username, setUsername] = useState('');
@@ -94,15 +94,18 @@ const Register = () => {
     <div className="min-h-screen flex flex-col">
       <Navbar />
       
-      <div className="flex-1 flex items-center justify-center py-12">
-        <div className="w-full max-w-md px-8 py-12 bg-card rounded-lg shadow-lg">
+      <div className="flex-1 flex items-center justify-center auth-page py-12">
+        <div className="w-full max-w-md px-8 py-10 auth-card rounded-xl">
           <div className="flex justify-center mb-6">
-            <div className="p-2 rounded-full bg-cinema-accent/10">
-              <Film className="h-8 w-8 text-cinema-accent" />
+            <div className="p-3 rounded-full bg-cinema-accent text-white">
+              <UserPlus className="h-8 w-8" />
             </div>
           </div>
           
-          <h1 className="text-2xl font-bold text-center mb-6">Create an Account</h1>
+          <h1 className="text-3xl font-bold text-center mb-2">Create Account</h1>
+          <p className="text-center text-muted-foreground mb-6">
+            Join CinemaVerse to start booking tickets
+          </p>
           
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
@@ -115,6 +118,7 @@ const Register = () => {
                 placeholder="Choose a username"
                 required
                 disabled={loading}
+                className="h-11"
               />
               <p className="text-xs text-muted-foreground">
                 Must be 80 characters or less
@@ -131,6 +135,7 @@ const Register = () => {
                 placeholder="Enter your email"
                 required
                 disabled={loading}
+                className="h-11"
               />
             </div>
             
@@ -144,6 +149,7 @@ const Register = () => {
                 placeholder="Choose a password"
                 required
                 disabled={loading}
+                className="h-11"
               />
               <p className="text-xs text-muted-foreground">
                 Must be at least 6 characters
@@ -160,12 +166,13 @@ const Register = () => {
                 placeholder="Confirm your password"
                 required
                 disabled={loading}
+                className="h-11"
               />
             </div>
             
             <Button 
               type="submit" 
-              className="w-full bg-cinema-accent hover:bg-cinema-accent/90"
+              className="w-full h-11 bg-cinema-accent hover:bg-cinema-accent/90 text-lg font-medium mt-2"
               disabled={loading}
             >
               {loading ? (

@@ -96,7 +96,11 @@ export default {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
         'fade-in': 'fade-in 0.5s ease-out forwards'
-			}
+			},
+      backgroundImage: {
+        'cinema-pattern': "url('/lovable-uploads/f0f7d7e7-9249-4bef-b6ef-c839bea025bf.png')",
+        'auth-pattern': "url('/lovable-uploads/9ec49926-0355-4dc1-8dd7-27bd01a52e21.png')"
+      }
 		}
 	},
 	plugins: [require("tailwindcss-animate")],
