@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { fetchMovies, searchMovies, Movie } from '@/services/api';
@@ -82,9 +83,9 @@ const MovieList = () => {
     } catch (error) {
       console.error('Failed to fetch movies:', error);
       toast({
-        title: 'Error',
-        description: 'Failed to load movies',
-        variant: 'destructive',
+        title: "Error",
+        description: "Failed to load movies",
+        variant: "destructive",
       });
       
       // Set demo data in case of error

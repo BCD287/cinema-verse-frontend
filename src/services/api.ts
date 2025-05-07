@@ -1,3 +1,4 @@
+
 import { API_URL } from '@/lib/constants';
 import type { Movie, Showtime, Seat, Reservation, User, Payment, Admin, AdminReference } from '@/types/cinema';
 export type { Movie, Showtime, Seat, Reservation, User, Payment, Admin, AdminReference } from '@/types/cinema';
