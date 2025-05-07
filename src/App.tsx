@@ -17,6 +17,8 @@ import ShowtimesList from "./pages/ShowtimesList";
 import BookingPage from "./pages/BookingPage";
 import MyReservations from "./pages/MyReservations";
 import AdminMovies from "./pages/AdminMovies";
+import AdminMovieCreate from "./pages/AdminMovieCreate";
+import AdminMovieEdit from "./pages/AdminMovieEdit";
 import AdminShowtimes from "./pages/AdminShowtimes";
 import AdminReports from "./pages/AdminReports";
 import AdminSeats from "./pages/AdminSeats";
@@ -41,6 +43,8 @@ const App = () => (
             <Route path="/book/:id" element={<BookingPage />} />
             <Route path="/my-reservations" element={<MyReservations />} />
             <Route path="/admin/movies" element={<AdminMovies />} />
+            <Route path="/admin/movies/create" element={<AdminMovieCreate />} />
+            <Route path="/admin/movies/edit/:id" element={<AdminMovieEdit />} />
             <Route path="/admin/showtimes" element={<AdminShowtimes />} />
             <Route path="/admin/reports" element={<AdminReports />} />
             <Route path="/admin/seats/:id" element={<AdminSeats />} />

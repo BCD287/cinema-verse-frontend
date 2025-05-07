@@ -1,10 +1,8 @@
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
+ 
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -12,117 +10,133 @@
 
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
-
+ 
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-
+ 
     --primary: 222.2 47.4% 11.2%;
     --primary-foreground: 210 40% 98%;
-
+ 
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
-
+ 
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
-
+ 
     --accent: 210 40% 96.1%;
     --accent-foreground: 222.2 47.4% 11.2%;
-
+ 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
     --ring: 222.2 84% 4.9%;
-
+ 
     --radius: 0.5rem;
     
-    /* Cinema theme colors */
-    --cinema-primary: 345 82% 40%;
-    --cinema-secondary: 220 60% 20%;
-    --cinema-accent: 345 70% 50%;
+    /* Cinema app custom vars */
+    --cinema-accent: 0 75% 50%;
+    --cinema-accent-foreground: 0 0% 100%;
   }
-
+ 
   .dark {
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
-
+ 
     --card: 222.2 84% 4.9%;
     --card-foreground: 210 40% 98%;
-
+ 
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
-
+ 
     --primary: 210 40% 98%;
     --primary-foreground: 222.2 47.4% 11.2%;
-
+ 
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
-
+ 
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
-
+ 
     --accent: 217.2 32.6% 17.5%;
     --accent-foreground: 210 40% 98%;
-
+ 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
-
+ 
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
     
-    /* Cinema theme colors */
-    --cinema-primary: 345 70% 50%;
-    --cinema-secondary: 220 40% 30%;
-    --cinema-accent: 345 60% 60%;
+    /* Cinema app custom vars */
+    --cinema-accent: 0 75% 50%;
+    --cinema-accent-foreground: 0 0% 100%;
   }
 }
-
+ 
 @layer base {
   * {
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground font-inter;
-    font-feature-settings: "rlig" 1, "calt" 1;
+    @apply bg-background text-foreground;
   }
 }
 
-.cinema-gradient {
-  @apply bg-gradient-to-br from-red-800 via-red-900 to-red-950;
-}
+/* Cinema app custom styles */
 
+/* Screen (the movie theater screen) */
 .screen {
-  @apply h-4 bg-blue-300 w-4/5 mx-auto mb-12 rounded-t-full opacity-80;
-  box-shadow: 0 0 30px rgba(65, 185, 255, 0.7);
-  transform: perspective(100px) rotateX(-5deg);
+  @apply h-3 w-full bg-gradient-to-t from-gray-50 to-gray-200 dark:from-gray-800 dark:to-gray-700 mb-10 transform perspective-800 rotateX-60 border-b-4 border-gray-300 dark:border-gray-600 shadow-lg;
 }
 
+/* Seats */
 .seat {
-  @apply w-10 h-10 m-1 rounded-t-lg cursor-pointer transition-all;
+  @apply w-9 h-9 flex items-center justify-center rounded-md text-sm font-medium cursor-pointer transition-all duration-200 m-0.5;
 }
 
 .seat-available {
-  @apply bg-blue-100 hover:bg-blue-300;
-}
-
-.seat-reserved {
-  @apply bg-gray-400 cursor-not-allowed;
+  @apply bg-gray-100 hover:bg-gray-200 text-gray-800 border border-gray-300;
 }
 
 .seat-selected {
-  @apply bg-green-500;
+  @apply bg-red-500 hover:bg-red-600 text-white border border-red-600;
 }
 
-.font-inter {
-  font-family: 'Inter', sans-serif;
+.seat-reserved {
+  @apply bg-gray-300 text-gray-500 cursor-not-allowed opacity-60 border border-gray-400;
 }
 
-.movie-card {
-  @apply relative overflow-hidden rounded-lg shadow-lg transition-transform duration-300 hover:shadow-xl hover:scale-[1.02] bg-card text-card-foreground;
+/* Custom animation classes */
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-in-out;
 }
 
-.movie-poster {
-  @apply w-full h-80 object-cover;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hover-lift {
+  @apply transition-transform duration-200;
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+}
+
+/* Background color for cinema accent */
+.bg-cinema-accent {
+  @apply bg-red-600 text-white;
+}
+
+.hover\:bg-cinema-accent\/90:hover {
+  @apply bg-red-600/90;
 }
