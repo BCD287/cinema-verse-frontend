@@ -1,3 +1,4 @@
+
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
@@ -21,7 +22,9 @@ export function Navbar() {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    navigate(`/search?query=${encodeURIComponent(searchQuery)}`);
+    if (searchQuery.trim()) {
+      navigate(`/movies?query=${encodeURIComponent(searchQuery.trim())}`);
+    }
   };
 
   return (

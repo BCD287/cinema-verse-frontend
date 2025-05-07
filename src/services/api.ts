@@ -1,4 +1,3 @@
-
 import { API_URL } from '@/lib/constants';
 import type { Movie, Showtime, Seat, Reservation, User, Payment, Admin, AdminReference } from '@/types/cinema';
 export type { Movie, Showtime, Seat, Reservation, User, Payment, Admin, AdminReference } from '@/types/cinema';
@@ -148,21 +147,37 @@ export const fetchMovies = async (page = 1, perPage = 10) => {
 };
 
 export const searchMovies = async (genre?: string, title?: string) => {
-  let url = `/movies/search`;
-  const params = new URLSearchParams();
-  if (genre) params.append('genre', genre);
-  if (title) params.append('title', title);
-  
-  if (params.toString()) {
-    url += `?${params.toString()}`;
+  try {
+    let url = `/movies/search`;
+    const params = new URLSearchParams();
+    if (genre) params.append('genre', genre);
+    if (title) params.append('title', title);
+    
+    if (params.toString()) {
+      url += `?${params.toString()}`;
+    }
+    
+    console.log(`Searching movies with params: genre=${genre || 'none'}, title=${title || 'none'}`);
+    
+    const response = await fetchWithProxy(url, { 
+      headers: getAuthHeader() 
+    });
+    
+    // Transform the response to match our expected format
+    if (Array.isArray(response)) {
+      console.log(`Found ${response.length} movies matching search criteria`);
+      return response;
+    } else if (response && typeof response === 'object') {
+      console.log('Received object response from search, converting to array');
+      return [response];
+    }
+    
+    console.warn('Unexpected response format from search:', response);
+    return [];
+  } catch (error) {
+    console.error('Movie search failed:', error);
+    throw error;
   }
-  
-  const movies = await fetchWithProxy(url, { 
-    headers: getAuthHeader() 
-  });
-  
-  // Transform the response to match our expected format if needed
-  return Array.isArray(movies) ? movies : [];
 };
 
 export const createMovie = async (movieData: Omit<Movie, 'id'>) => {

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { fetchMovies, searchMovies, Movie } from '@/services/api';
@@ -71,7 +70,7 @@ const MovieList = () => {
     try {
       if ((title && title.trim() !== '') || (genre && genre !== 'All Genres')) {
         const filteredGenre = genre && genre !== 'All Genres' ? genre : '';
-        const results = await searchMovies(filteredGenre, title);
+        const results = await searchMovies(filteredGenre, title || '');
         setMovies(results);
         setTotalPages(1); // Search doesn't support pagination in this API
       } else {
