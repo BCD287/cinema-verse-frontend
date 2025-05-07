@@ -68,14 +68,14 @@ export const fetchWithProxy = async (
     const rawText = await responseClone.text();
     
     // Special handling for movies endpoint which might return HTML
-    if (endpoint.includes('/movies')) {
-      console.log('Processing movies endpoint response, first 100 chars:', rawText.substring(0, 100));
+    if (endpoint.includes('/movies') || endpoint.includes('/showtimes')) {
+      console.log(`Processing ${endpoint} response, first 100 chars:`, rawText.substring(0, 100));
       
       // Check if the raw text looks like JSON despite content type
       if (rawText.trim().startsWith('{') || rawText.trim().startsWith('[')) {
         try {
           const jsonData = JSON.parse(rawText);
-          console.log('Successfully parsed movies JSON data from response');
+          console.log(`Successfully parsed ${endpoint} JSON data from response`);
           return jsonData;
         } catch (e) {
           console.error('Failed to parse text as JSON despite JSON-like format:', e);

@@ -76,7 +76,7 @@ fetch('${API_URL}${endpoint}', {
       <CardContent>
         <div className="flex flex-col gap-4">
           {isNgrok && (
-            <Alert variant="info" className="bg-blue-50">
+            <Alert className="bg-blue-50">
               <AlertTriangle className="h-4 w-4" />
               <AlertTitle>Ngrok URL Detected</AlertTitle>
               <AlertDescription>

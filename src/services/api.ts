@@ -121,8 +121,8 @@ export const fetchMovies = async (page = 1, perPage = 10) => {
             release_date: movie.release_date,
             natural_release_date: movie.natural_release_date || movie.release_date
           })),
-          total_pages: data.total_pages || 1,
-          current_page: data.current_page || 1
+          total_pages: data.total_pages || data.pages || 1,
+          current_page: data.current_page || page
         };
       } else {
         // If data is returned but doesn't match expected format
@@ -230,7 +230,8 @@ export const createShowtime = async (movieId: number, startTime: string, duratio
   return fetchWithProxy('/showtimes', {
     method: 'POST',
     headers: {
-      ...getAuthHeader()
+      ...getAuthHeader(),
+      'Content-Type': 'application/json'
     },
     body: JSON.stringify({
       movie_id: movieId,
@@ -259,7 +260,8 @@ export const createSeats = async (showtimeId: number, seatNumbers: string[]) => 
   return fetchWithProxy('/seats', {
     method: 'POST',
     headers: {
-      ...getAuthHeader()
+      ...getAuthHeader(),
+      'Content-Type': 'application/json'
     },
     body: JSON.stringify({
       showtime_id: showtimeId,
@@ -278,7 +280,8 @@ export const createReservation = async (
   return fetchWithProxy('/reservations', {
     method: 'POST',
     headers: {
-      ...getAuthHeader()
+      ...getAuthHeader(),
+      'Content-Type': 'application/json'
     },
     body: JSON.stringify({
       showtime_id: showtimeId,
@@ -299,7 +302,8 @@ export const updateReservation = async (
   return fetchWithProxy(`/reservations/${reservationId}`, {
     method: 'PUT',
     headers: {
-      ...getAuthHeader()
+      ...getAuthHeader(),
+      'Content-Type': 'application/json'
     },
     body: JSON.stringify({
       showtime_id: showtimeId,
@@ -346,5 +350,25 @@ export const checkAdminAccess = async () => {
   } catch (error) {
     console.error('Admin access check error:', error);
     return false;
+  }
+};
+
+// Process payment via Stripe
+export const processStripePayment = async (amount: number, paymentToken: string) => {
+  try {
+    return await fetchWithProxy('/process-payment', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...getAuthHeader()
+      },
+      body: JSON.stringify({
+        amount,
+        payment_token: paymentToken
+      })
+    });
+  } catch (error) {
+    console.error('Payment processing error:', error);
+    throw error;
   }
 };

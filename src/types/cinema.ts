@@ -79,3 +79,19 @@ export type PaymentMethod = 'credit_card' | 'paypal' | 'cash' | 'M-Pesa';
 export type PaymentStatus = 'pending' | 'completed' | 'processing' | 'failed';
 
 export type ReservationStatus = 'pending' | 'confirmed' | 'cancelled' | 'awaiting_payment' | 'awaiting_verification';
+
+// Stripe related types
+export interface StripePayment {
+  amount: number; // in cents
+  currency: string;
+  source: string; // payment token
+  description?: string;
+}
+
+export interface StripeResponse {
+  id: string;
+  amount: number;
+  status: string;
+  created: number; // timestamp
+  receipt_url?: string;
+}
